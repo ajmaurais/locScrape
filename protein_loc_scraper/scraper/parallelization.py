@@ -7,7 +7,7 @@ from typing import List
 import tqdm
 import sys
 
-from scraper import getLocs
+from .scraper import getLocs
 
 def getLocList(uniProtIDs: List, nThread: int = None) -> List:
     '''

@@ -6,7 +6,7 @@ import os
 import sys
 
 #my modules
-import parallelization
+import scraper
 
 def getArgs():
     parser = argparse.ArgumentParser(description='Get subcellular location annotations for a list of uniprot protein IDs.')
@@ -37,7 +37,7 @@ def getArgs():
     #manually processing of certian args
     ofnames = list()
     if args.inPlace:
-        ofnames = args.ifnames
+        ofnames = args.input_file
     else:
         for fname in args.input_file:
             ofnames.append('{}_loc.tsv'.format(os.path.splitext(fname)[0]))
@@ -57,7 +57,7 @@ def main():
         df = read_csv(ifname, sep = delim)
 
         ids = df[args.idCol].tolist()
-        locations = parallelization.getLocList(ids, nThread = args.nThread)
+        locations = scraper.getLocList(ids, nThread = args.nThread)
 
         df[args.locCol] = locations
 

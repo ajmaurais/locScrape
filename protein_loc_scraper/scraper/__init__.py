@@ -1,0 +1,2 @@
+
+from .parallelization import getLocList
