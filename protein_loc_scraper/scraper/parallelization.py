@@ -4,7 +4,7 @@ from multiprocessing.pool import ThreadPool as Pool
 
 from multiprocessing import cpu_count
 from typing import List
-import tqdm
+from tqdm import tqdm
 import sys
 
 from .scraper import getLocs

@@ -1,12 +1,11 @@
 
 import argparse
-import csv
-from pandas import read_csv
 import os
 import sys
 
 #my modules
 import scraper
+import dataframe
 
 def getArgs():
     parser = argparse.ArgumentParser(description='Get subcellular location annotations for a list of uniprot protein IDs.')
@@ -52,16 +51,14 @@ def main():
 
     for i, ifname in enumerate(args.input_file):
         sys.stdout.write('Working on {}...\n'.format(ifname))
-        inF = open(ifname, 'r')
-        delim = csv.Sniffer().sniff(inF.read(1024)).delimiter
-        df = read_csv(ifname, sep = delim)
+        df = dataframe.read_tsv(ifname)
 
-        ids = df[args.idCol].tolist()
+        ids = df[args.idCol]
         locations = scraper.getLocList(ids, nThread = args.nThread)
 
         df[args.locCol] = locations
 
-        df.to_csv(ofnames[i], sep = '\t', index = False)
+        df.to_csv(ofnames[i], sep = '\t')
         sys.stdout.write('Results written to {}\n'.format(ofnames[i]))
 
 if __name__ == '__main__':
