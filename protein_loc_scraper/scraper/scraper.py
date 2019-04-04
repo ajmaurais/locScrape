@@ -2,7 +2,6 @@
 import requests
 from typing import List
 from lxml import html
-import sys
 
 SKIP_LOCS = ['other locations']
 
@@ -34,8 +33,6 @@ def getLocs(uniprotID: str) -> str:
     sl = tree.xpath('//*[@id="table-uniprot_annotation"]/div/ul/li/h6/text()')
     ssl = tree.xpath('//*[@id="table-uniprot_annotation"]/div/ul/li/ul/li/a/text()')
     locs = _concatLocs([x.lower().strip() for x in sl + ssl])
-
-    #print('{} -> {}'.format(uniprotID, locs))
 
     return locs
 
