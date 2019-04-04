@@ -3,6 +3,7 @@
 .idea/*
 .DS_store
 testFiles/*
+*.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
