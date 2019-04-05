@@ -1,5 +1,5 @@
 
-from typing import Dict
+from typing import Dict, List
 import csv
 
 class DataFrame(object):
@@ -10,16 +10,19 @@ class DataFrame(object):
         self.nrow = 0
         self.ncol = 0
         self.data = dict()
-        self.columns = list()
+        self._columns = list()
 
         if not data is None:
             self._fromDict(data)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str) -> List:
+        if item not in self._columns:
+            raise KeyError('{} is not a column!'.format(item))
         return self.data[item]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: List):
         self.data[key] = value
+        self._columns.append(key)
 
     def _fromDict(self, data: Dict):
         for i, k, v in enumerate(data.items()):
@@ -29,8 +32,8 @@ class DataFrame(object):
                 if self.nrow != len(v):
                     raise ValueError('Columns must all be same length!')
             self.data[k] = v
-            self.columns.append(k)
-        self.ncol = len(self.columns)
+            self._columns.append(k)
+        self.ncol = len(self._columns)
         self.data[DataFrame._ROW_NAME] = [x for x in range(self.nrow)]
 
 
@@ -46,17 +49,17 @@ class DataFrame(object):
         outF = open(ofname, 'w')
 
         #print headers
-        for i, s in enumerate(self.columns):
+        for i, s in enumerate(self._columns):
             if i == 0:
                 outF.write('{}'.format(s))
-            else: outF.write('\t{}'.format(s))
+            else: outF.write('{}{}'.format(sep, s))
         outF.write('\n')
 
-        for i, row in self.iterrows():
-            for col in self.columns:
-                if i == 0:
+        for _, row in self.iterrows():
+            for j, col in enumerate(self._columns):
+                if j == 0:
                     outF.write('{}'.format(row[col]))
-                else: outF.write('\t{}'.format(row[col]))
+                else: outF.write('{}{}'.format(sep, row[col]))
             outF.write('\n')
 
 
@@ -76,7 +79,7 @@ def read_tsv(fname: str, hasHeader: bool = True):
         _start = 0
     ret.data = {x: list() for x in _keys}
     ret.data[DataFrame._ROW_NAME] = list()
-    ret.columns = _keys
+    ret._columns = _keys
     ret.ncol = len(_keys)
 
     #iterate through lines
@@ -85,7 +88,7 @@ def read_tsv(fname: str, hasHeader: bool = True):
         if len(elems) != ret.ncol:
             raise RuntimeError('Incorect number elements in row: {}'.format(i))
         for j, elem in enumerate(elems):
-            ret.data[ret.columns[j]].append(elem)
+            ret.data[ret._columns[j]].append(elem)
         ret.data[DataFrame._ROW_NAME].append(i)
     ret.nrow = len(ret.data[DataFrame._ROW_NAME])
 

@@ -53,13 +53,21 @@ def main():
         sys.stdout.write('Working on {}...\n'.format(ifname))
         df = dataframe.read_tsv(ifname)
 
-        ids = df[args.idCol]
-        locations = scraper.getLocList(ids, nThread = args.nThread)
+        #get list of uniprot IDs
+        sys.stdout.write('Using \'{}\' as the uniprot ID column.\n'.format(args.idCol))
+        try:
+            ids = df[args.idCol]
+        except KeyError as e:
+            sys.stderr.write('Error in {}: {}\nSkipping...\n'.format(ifname, e))
+            continue
 
+        #get locations
+        locations = scraper.getLocList(ids, nThread = args.nThread)
         df[args.locCol] = locations
 
+        #write results
         df.to_csv(ofnames[i], sep = '\t')
-        sys.stdout.write('Results written to {}\n'.format(ofnames[i]))
+        sys.stdout.write('Results written to {}\n\n'.format(ofnames[i]))
 
 if __name__ == '__main__':
     main()
