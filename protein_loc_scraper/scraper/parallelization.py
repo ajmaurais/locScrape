@@ -30,7 +30,7 @@ def getLocList(uniProtIDs: List, nThread: int = None) -> List:
         _nThread = nThread
 
     #lookup locs using thread pool
-    sys.stdout.write('Searching for locations with {} threads...\n'.format(_nThread))
+    sys.stdout.write('Searching for locations with {} thread(s)...\n'.format(_nThread))
     with Pool(processes=_nThread) as pool:
         ret = list(tqdm(pool.imap(getLocs, uniProtIDs),
                              total = listLen,

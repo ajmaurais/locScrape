@@ -3,6 +3,11 @@ from typing import Dict, List
 import csv
 
 class DataFrame(object):
+    '''
+    Lightweight DataFrame class which recreates some of the
+    functionality as a Pandas.DataFrame without having to
+    import the entire Pandas library.
+    '''
 
     _ROW_NAME = '_row'
 
@@ -22,7 +27,8 @@ class DataFrame(object):
 
     def __setitem__(self, key: str, value: List):
         self.data[key] = value
-        self._columns.append(key)
+        if key not in self._columns:
+            self._columns.append(key)
 
     def _fromDict(self, data: Dict):
         for i, k, v in enumerate(data.items()):
@@ -32,7 +38,8 @@ class DataFrame(object):
                 if self.nrow != len(v):
                     raise ValueError('Columns must all be same length!')
             self.data[k] = v
-            self._columns.append(k)
+            if k not in self._columns:
+                self._columns.append(k)
         self.ncol = len(self._columns)
         self.data[DataFrame._ROW_NAME] = [x for x in range(self.nrow)]
 

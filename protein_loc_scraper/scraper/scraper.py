@@ -1,6 +1,6 @@
 
 import requests
-from typing import List
+from typing import List, Tuple
 from lxml import html
 
 SKIP_LOCS = ['other locations']
@@ -16,23 +16,33 @@ def removeDuplicates(values):
 
 
 def _concatLocs(locList: List, delim: str = ';') -> str:
-    ret = [x for x in locList if x not in SKIP_LOCS]
+    #process text and remove any string in SKIP_LOCS
+    ret = list(filter(lambda x: x not in SKIP_LOCS, [y.lower().strip() for y in locList]))
     ret = removeDuplicates(ret)
     if not ret:
         return 'no_annotated_location'
     return delim.join(ret)
 
 
-def getLocs(uniprotID: str) -> str:
+def getLocs(uniprotID: str) -> Tuple:
     url = 'http://www.uniprot.org/uniprot/' + uniprotID + '.html'
     response = requests.get(url)
     if response.status_code >= 400:
-        return "No_uniprot_records_found"
+        return 'no_uniprot_records_found', 'no_uniprot_records_found', 'no_uniprot_records_found'
 
     tree = html.fromstring(response.content)
+
+    #get sl uniprot anotation
     sl = tree.xpath('//*[@id="table-uniprot_annotation"]/div/ul/li/h6/text()')
     ssl = tree.xpath('//*[@id="table-uniprot_annotation"]/div/ul/li/ul/li/a/text()')
-    locs = _concatLocs([x.lower().strip() for x in sl + ssl])
+    locs = _concatLocs(sl + ssl)
 
-    return locs
+    #get go term for celluar component
+    go = tree.xpath('//*[@id="table-go_annotation"]/div/ul/li/h6/text()')
+    sgo = tree.xpath('//*[@id="table-go_annotation"]/div/ul/li/ul/li/a/text()')
+    gos = _concatLocs(go + sgo)
+
+    concat = _concatLocs(sl + ssl + go + sgo)
+
+    return locs, gos, concat
 
