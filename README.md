@@ -2,7 +2,7 @@
 Given a .tsv file with a column containing Uniprot protein IDs, scrape annotations for subcellular location from Uniprot.org
 
 ## Installation
-The simplest way to install `locScraper` is to download one of the precompiled binaries under the [releases](https://github.com/ajmaurais/locScraper) tab. Binaries are available for OSX and CentOS. 
+The simplest way to install `locScraper` is to download one of the precompiled binaries under the [releases](https://github.com/ajmaurais/locScraper/releases) tab. Binaries are available for OSX and CentOS. 
 
 You can also clone this repository with the command.
 ```
