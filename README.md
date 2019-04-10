@@ -6,7 +6,7 @@ The simplest way to install `locScraper` is to download one of the precompiled b
 
 You can also clone this repository with the command.
 ```
-git clone https://github.com/ajmaurais/locScraper/tree/master
+git clone https://github.com/ajmaurais/locScraper
 ```
 
 `locScraper` is written in `Python 3.7` If you elect to clone the repository, you must install `Python 3.7` and the flowing libraries:
