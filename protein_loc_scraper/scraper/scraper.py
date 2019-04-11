@@ -24,9 +24,16 @@ def _concatLocs(locList: List, delim: str = ';') -> str:
     return delim.join(ret)
 
 
-def getLocs(uniprotID: str) -> Tuple:
+def getLocs(uniprotID: str, nRetry = 10) -> Tuple:
     url = 'http://www.uniprot.org/uniprot/' + uniprotID + '.html'
-    response = requests.get(url)
+    for _ in range(nRetry):
+        try:
+            response = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            continue
+        else:
+            break
+
     if response.status_code >= 400:
         return 'no_uniprot_records_found', 'no_uniprot_records_found', 'no_uniprot_records_found'
 
