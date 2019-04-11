@@ -1,5 +1,6 @@
 
 import requests
+import sys
 from typing import List, Tuple
 from lxml import html
 
@@ -24,14 +25,15 @@ def _concatLocs(locList: List, delim: str = ';') -> str:
     return delim.join(ret)
 
 
-def getLocs(uniprotID: str, nRetry = 10) -> Tuple:
+def getLocs(uniprotID: str, nRetry: int = 10) -> Tuple:
     url = 'http://www.uniprot.org/uniprot/' + uniprotID + '.html'
     response = None
-    for _ in range(nRetry):
+    for i in range(nRetry):
         try:
             response = requests.get(url)
         except(requests.exceptions.ConnectionError,
                requests.exceptions.ChunkedEncodingError):
+            sys.stderr.write('Retry {} of {} for {}\n'.format(i, nRetry, uniprotID))
             continue
         else:
             break
