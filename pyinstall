@@ -1,5 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 pyinstaller -p protein_loc_scraper --hidden-import scraper --hidden-import dataframe --onefile protein_loc_scraper/locScraper.py
 cd dist
-tar -czvf locScraper_Darwin_x64.tar.gz locScraper
+tar -czvf locScraper_"$OSTYPE"_x64.tar.gz locScraper
 cd ..
