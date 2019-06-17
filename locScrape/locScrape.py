@@ -8,10 +8,10 @@ import scraper
 import dataframe
 
 def getArgs():
-    parser = argparse.ArgumentParser(prog = 'locScraper',
+    parser = argparse.ArgumentParser(prog = 'locScrape',
                                      description='Get subcellular location annotations for a list of Uniprot protein IDs. '
-                                                 'A column in input_file should contain Uniprot IDs. After locScraper '
-                                                 'runs, columns will be added for Unipriot location annotations, '
+                                                 'A column in input_file should contain Uniprot IDs. After locScrape '
+                                                 'finishes, columns will be added for Unipriot location annotations, '
                                                  'GO celluar component annotations.')
 
     parser.add_argument('-i', '--idCol', default = 'ID', type = str,
