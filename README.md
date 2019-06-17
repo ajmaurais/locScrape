@@ -9,12 +9,6 @@ You can also clone this repository with the command.
 git clone https://github.com/ajmaurais/locScraper
 ```
 
-`locScraper` is written in `Python 3.7` If you elect to clone the repository, you must install `Python 3.7` and the flowing libraries:
-```
-tqdm
-lxml
-```
-
 ## Usage
 ```
 usage: locScraper [-h] [-i IDCOL] [--columns {sl,go,all}] [--locCol LOCCOL]
