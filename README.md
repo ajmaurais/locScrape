@@ -1,23 +1,23 @@
-# locScraper
+# locScrape
 Given a .tsv file with a column containing Uniprot protein IDs, scrape annotations for subcellular location from Uniprot.org
 
 ## Installation
-The simplest way to install `locScraper` is to download one of the precompiled binaries under the [releases](https://github.com/ajmaurais/locScraper/releases) tab. Binaries are available for OSX and CentOS. 
+The simplest way to install `locScrape` is to download one of the precompiled binaries under the [releases](https://github.com/ajmaurais/locScrape/releases) tab. Binaries are available for OSX and CentOS. 
 
 You can also clone this repository with the command.
 ```
-git clone https://github.com/ajmaurais/locScraper
+git clone https://github.com/ajmaurais/locScrape
 ```
 
 ## Usage
 ```
-usage: locScraper [-h] [-i IDCOL] [--columns {sl,go,all}] [--locCol LOCCOL]
+usage: locScrape [-h] [-i IDCOL] [--columns {sl,go,all}] [--locCol LOCCOL]
                   [--goCol GOCOL] [--allCol ALLCOL] [--nThread NTHREAD]
                   [-o OFNAME] [--inPlace]
                   input_file [input_file ...]
 
 Get subcellular location annotations for a list of Uniprot protein IDs. A
-column in input_file should contain Uniprot IDs. After locScraper runs,
+column in input_file should contain Uniprot IDs. After locScrape runs,
 columns will be added for Unipriot location annotations, GO cellular component
 annotations.
 
