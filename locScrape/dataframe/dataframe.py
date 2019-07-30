@@ -70,10 +70,9 @@ class DataFrame(object):
             outF.write('\n')
 
 
-def read_tsv(fname: str, hasHeader: bool = True):
+def read_tsv(fname: str, hasHeader: bool = True, delim: str = '\t'):
     inF = open(fname, 'r')
     lines = inF.read().splitlines()
-    delim = csv.Sniffer().sniff(lines[0]).delimiter
     ret = DataFrame()
 
     #add row keys
