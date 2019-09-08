@@ -2,6 +2,7 @@
 import argparse
 import os
 
+ID_COL = 'ID'
 
 def process_ofnames(args, post):
     # manually process of some args
@@ -18,8 +19,9 @@ def process_ofnames(args, post):
 
 parent_parser = argparse.ArgumentParser(add_help=False)
 
-parent_parser.add_argument('-i', '--idCol', default = 'ID', type = str,
-                           help = 'Name of column containing Uniprot IDs.')
+parent_parser.add_argument('-i', '--idCol', default = ID_COL, type = str,
+                           help = 'Name of column containing Uniprot IDs. '
+                                  'Default is "{}".'.format(ID_COL))
 
 parent_parser.add_argument('--nThread', default=None, type=int,
                            help='Number of threads to use to lookup Uniprot annotations. '
