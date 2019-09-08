@@ -7,20 +7,18 @@ from typing import List
 from tqdm import tqdm
 import sys
 
-from .scraper import getLocs
-
-def getLocList(uniProtIDs: List, nThread: int = None) -> List:
+def scrape(uniProtIDs: List, scrapeFunction, nThread: int = None) -> List:
     '''
     Given a list of uniprot IDs, return a list in the same order containing uniprot
     annotations for subcellular localization.
 
     :param uniProtIDs: uniprot IDs of proteins to look up.
-    :param nThread: Nunber of threads to use
+    :param nThread: Number of threads to use
     :param threadMult: Factor to multiply number of logical cores by to get number of threads to use.
     :return: List of subcellular locations.
     '''
 
-    #calculate number of threads reqired
+    #calculate number of threads required
     _nThread = int(1)
     listLen = len(uniProtIDs)
     cpuCount = cpu_count()
@@ -30,9 +28,9 @@ def getLocList(uniProtIDs: List, nThread: int = None) -> List:
         _nThread = nThread
 
     #lookup locs using thread pool
-    sys.stdout.write('Searching for locations with {} thread(s)...\n'.format(_nThread))
+    sys.stdout.write('Searching for data with {} thread(s)...\n'.format(_nThread))
     with Pool(processes=_nThread) as pool:
-        ret = list(tqdm(pool.imap(getLocs, uniProtIDs),
+        ret = list(tqdm(pool.imap(scrapeFunction, uniProtIDs),
                              total = listLen,
                              miniters=1,
                              file = sys.stdout))

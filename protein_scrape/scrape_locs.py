@@ -1,21 +1,20 @@
 
 import argparse
-import os
 import sys
 
 #my modules
 import scraper
 import dataframe
 
+import base_parser
+
 def getArgs():
-    parser = argparse.ArgumentParser(prog = 'locScrape',
+    parser = argparse.ArgumentParser(prog = 'scrape_loc',
                                      description='Get subcellular location annotations for a list of Uniprot protein IDs. '
                                                  'A column in input_file should contain Uniprot IDs. After locScrape '
                                                  'finishes, columns will be added for Unipriot location annotations, '
-                                                 'GO celluar component annotations.')
-
-    parser.add_argument('-i', '--idCol', default = 'ID', type = str,
-                        help = 'Name of column containing Uniprot IDs.')
+                                                 'GO celluar component annotations.',
+                                     parents=[base_parser.parent_parser])
 
     parser.add_argument('--columns', choices= ['sl', 'go', 'all'], default =  'all',
                         help = 'Which new columns should be added? Default is all.')
@@ -29,34 +28,9 @@ def getArgs():
     parser.add_argument('--allCol', default='all_locations',
                         help='Name of new column to add with GO and Uniprot annotations combined.')
 
-    parser.add_argument('--nThread', default = None, type = int,
-                        help = 'Number of threads to use to lookup Uniprot annotations. '
-                               'Default is the number of logical cores on your system.')
-
-    parser.add_argument('-o', '--ofname', type = str, default = None,
-                        help = 'Name of output file. Default is <input_file>_loc.tsv. '
-                               'If multiple input files are given, this argument is ignored.')
-
-    parser.add_argument('--inPlace', default = False, action = 'store_true',
-                        help = 'Overwrite input files with output files. '
-                               'This option overrides the --ofname option.')
-
-    parser.add_argument('input_file', nargs='+',
-                        help = '.tsv or .csv files to process.')
-
     args = parser.parse_args()
 
-    #manually processing of certian args
-    ofnames = list()
-    if args.inPlace:
-        ofnames = args.input_file
-    else:
-        for fname in args.input_file:
-            ofnames.append('{}_loc.tsv'.format(os.path.splitext(fname)[0]))
-        if args.ofname is not None and len(args.input_file) > 1:
-            ofnames = [args.ofname]
-
-    return args, ofnames
+    return args, base_parser.process_ofnames(args, 'loc')
 
 
 def main():
