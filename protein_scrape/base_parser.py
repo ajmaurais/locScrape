@@ -1,7 +1,7 @@
 
 import argparse
 import os
-import sys
+
 
 def process_ofnames(args, post):
     # manually process of some args

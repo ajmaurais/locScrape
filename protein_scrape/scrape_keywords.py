@@ -5,28 +5,15 @@ import sys
 #my modules
 import scraper
 import dataframe
-
 import base_parser
 
 def getArgs():
-    parser = argparse.ArgumentParser(prog = 'scrape_loc',
-                                     description='Get subcellular location annotations for a list of Uniprot protein IDs. '
-                                                 'A column in input_file should contain Uniprot IDs. After locScrape '
-                                                 'finishes, columns will be added for Unipriot location annotations, '
-                                                 'GO celluar component annotations.',
+    parser = argparse.ArgumentParser(prog = 'scrape_keywords',
+                                     description='Get CV terms and values from the "Keywords" table for a list of '
+                                                 'Uniprot protein IDs. A column in input_file should contain Uniprot '
+                                                 'IDs. After scrape_keywords finishes, columns will be added for each '
+                                                 'CV term and value.',
                                      parents=[base_parser.parent_parser])
-
-    parser.add_argument('--columns', choices= ['fxn', 'ligand', 'all'], default =  'all',
-                        help = 'Which new columns should be added? Default is all.')
-
-    parser.add_argument('--fxnCol', default='molecular_function',
-                        help='Name of new column to add with molecular function.')
-
-    parser.add_argument('--ligandCol', default='ligand',
-                        help='Name of new column to add with ligand annotation.')
-
-    parser.add_argument('--allCol', default='all_locations',
-                        help='Name of new column to add with GO and Uniprot annotations combined.')
 
     args = parser.parse_args()
 
@@ -50,17 +37,18 @@ def main():
 
         #get locations
         functions = scraper.getFxnList(ids, nThread = args.nThread)
-        #
-        #transpose functions so columns can easily be added to df
-        functions = list(zip(*functions))
+
+        headers = set()
+        for f in functions:
+            headers.update(f.keys())
+
+        print_headers = [h.replace(' ', '_').lower() for h in headers]
 
         #add columns to df
-        if args.columns == 'all' or args.columns == 'fxn':
-            df[args.fxnCol] = functions[0]
-        if args.columns == 'all' or args.columns == 'ligand':
-            df[args.ligandCol] = functions[1]
-        if args.columns == 'all':
-            df[args.allCol] = functions[2]
+        sys.stdout.write('Adding columns:\n')
+        for k, h in zip(headers, print_headers):
+            sys.stdout.write('\t{}\n'.format(h))
+            df[h] = [f[k] if k in f else '' for f in functions]
 
         #write results
         df.to_csv(ofnames[i], sep = '\t')

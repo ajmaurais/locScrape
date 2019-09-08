@@ -1,10 +1,10 @@
 
-from typing import Tuple, List
+from typing import Dict, List
 from lxml import html
 
 from .parallelization import scrape
 from .utils import _make_request
-from .constants import FXN_PATH, LIGAND_PATH, REQUEST_ERROR, UNIPROT_ERROR
+from .constants import BASE_KEYWORD_DAT_PATH, KEYWORD_HEADER_PATH, REQUEST_ERROR, UNIPROT_ERROR, ERROR_HEADER
 
 
 def getFxnList(uniprotIDs: List, nThread: int = None) -> List:
@@ -18,28 +18,22 @@ def _concatFxn(fxnList: List, delim: str = ';') -> str:
     return ret
 
 
-def getFxn(uniprotID: str, nRetry: int = 10) -> Tuple:
-    RETURN_COUNT = 3
+def getFxn(uniprotID: str, nRetry: int = 10) -> Dict:
     response = _make_request(uniprotID, nRetry)
 
     if response is None:
-        return tuple(REQUEST_ERROR for _ in range(RETURN_COUNT))
+        return {ERROR_HEADER:REQUEST_ERROR}
 
     if response.status_code >= 400:
-        return tuple(UNIPROT_ERROR for _ in range(RETURN_COUNT))
+        return {ERROR_HEADER:UNIPROT_ERROR}
 
     tree = html.fromstring(response.content)
 
-    #get fxn and ligand
-    fxn = tree.xpath(FXN_PATH)
-    ligand = tree.xpath(LIGAND_PATH)
+    headers = tree.xpath(KEYWORD_HEADER_PATH)
 
-    #concat lists
-    fxns = _concatFxn(fxn)
-    ligands = _concatFxn(ligand)
-    concat = _concatFxn(fxn + ligand)
+    ret = dict()
+    for i, v in enumerate(headers):
+        dat = tree.xpath(BASE_KEYWORD_DAT_PATH.format(i+1))
+        ret[v] = _concatFxn(dat)
 
-    return fxns, ligands, concat
-
-
-
+    return ret
