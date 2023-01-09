@@ -3,10 +3,9 @@ import argparse
 import sys
 
 #my modules
-import scraper
-import dataframe
-
-import base_parser
+from .scraper import getLocList
+from .dataframe import read_tsv
+from .base_parser import parent_parser, process_ofnames
 
 def getArgs():
     parser = argparse.ArgumentParser(prog = 'scrape_loc',
@@ -14,7 +13,7 @@ def getArgs():
                                                  'A column in input_file should contain Uniprot IDs. After locScrape '
                                                  'finishes, columns will be added for Unipriot location annotations, '
                                                  'GO celluar component annotations.',
-                                     parents=[base_parser.parent_parser])
+                                     parents=[parent_parser])
 
     parser.add_argument('--columns', choices= ['sl', 'go', 'all'], default =  'all',
                         help = 'Which new columns should be added? Default is all.')
@@ -30,7 +29,7 @@ def getArgs():
 
     args = parser.parse_args()
 
-    return args, base_parser.process_ofnames(args, 'loc')
+    return args, process_ofnames(args, 'loc')
 
 
 def main():
@@ -38,7 +37,7 @@ def main():
 
     for i, ifname in enumerate(args.input_file):
         sys.stdout.write('Working on {}...\n'.format(ifname))
-        df = dataframe.read_tsv(ifname)
+        df = read_tsv(ifname)
 
         #get list of Uniprot IDs
         sys.stdout.write('Using \'{}\' as the Uniprot ID column.\n'.format(args.idCol))
@@ -49,7 +48,7 @@ def main():
             continue
 
         #get locations
-        locations = scraper.getLocList(ids, nThread=args.nThread, verbose=args.verbose)
+        locations = getLocList(ids, nThread=args.nThread, verbose=args.verbose)
 
         #transpose locations so columns can easily be added to df
         locations = list(zip(*locations))

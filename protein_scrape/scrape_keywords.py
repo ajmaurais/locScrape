@@ -3,9 +3,9 @@ import argparse
 import sys
 
 #my modules
-import scraper
-import dataframe
-import base_parser
+from .scraper import getFxnList
+from .dataframe import read_tsv
+from .base_parser import parent_parser, process_ofnames
 
 def getArgs():
     parser = argparse.ArgumentParser(prog = 'scrape_keywords',
@@ -13,11 +13,11 @@ def getArgs():
                                                  'Uniprot protein IDs. A column in input_file should contain Uniprot '
                                                  'IDs. After scrape_keywords finishes, columns will be added for each '
                                                  'CV term and value.',
-                                     parents=[base_parser.parent_parser])
+                                     parents=[parent_parser])
 
     args = parser.parse_args()
 
-    return args, base_parser.process_ofnames(args, 'fxn')
+    return args, process_ofnames(args, 'fxn')
 
 
 def main():
@@ -25,7 +25,7 @@ def main():
 
     for i, ifname in enumerate(args.input_file):
         sys.stdout.write('Working on {}...\n'.format(ifname))
-        df = dataframe.read_tsv(ifname)
+        df = read_tsv(ifname)
 
         #get list of Uniprot IDs
         sys.stdout.write('Using \'{}\' as the Uniprot ID column.\n'.format(args.idCol))
@@ -36,7 +36,7 @@ def main():
             continue
 
         #get locations
-        functions = scraper.getFxnList(ids, nThread = args.nThread)
+        functions = getFxnList(ids, nThread = args.nThread)
 
         headers = set()
         for f in functions:
