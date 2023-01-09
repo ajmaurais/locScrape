@@ -3,20 +3,19 @@ from typing import List, Tuple
 from lxml import html
 
 from .parallelization import scrape
-from .utils import _make_request, removeDuplicates
-from .constants import SL_XPATH, SSL_XPATH, GO_XPATH, SGO_XPATH, REQUEST_ERROR, UNIPROT_ERROR
+from .utils import _make_request
+from .constants import SL_XPATH, GO_XPATH, REQUEST_ERROR, UNIPROT_ERROR, CELLULAR_COMPONENT_RE
 
 SKIP_LOCS = ['other locations']
 
 
-def getLocList(uniprotIDs: List, nThread: int = None) -> List:
-    return scrape(uniprotIDs, getLocs, nThread)
+def getLocList(uniprotIDs: List, **kwargs) -> List:
+    return scrape(uniprotIDs, getLocs, **kwargs)
 
 
 def _concatLocs(locList: List, delim: str = ';') -> str:
     #process text and remove any string in SKIP_LOCS
-    ret = list(filter(lambda x: x not in SKIP_LOCS, [y.lower().strip() for y in locList]))
-    ret = removeDuplicates(ret)
+    ret = list(set(filter(lambda x: x not in SKIP_LOCS, [y.lower().strip() for y in locList])))
     if not ret:
         return 'no_annotated_location'
     return delim.join(ret)
@@ -36,15 +35,17 @@ def getLocs(uniprotID: str, nRetry: int = 10) -> Tuple:
 
     #get sl uniprot anotation
     sl = tree.xpath(SL_XPATH)
-    ssl = tree.xpath(SSL_XPATH)
-    locs = _concatLocs(sl + ssl)
+    # ssl = tree.xpath(SSL_XPATH)
+    # locs = _concatLocs(sl + ssl)
+    locs = _concatLocs(sl)
 
     #get go term for celluar component
     go = tree.xpath(GO_XPATH)
-    sgo = tree.xpath(SGO_XPATH)
-    gos = _concatLocs(go + sgo)
+    # sgo = tree.xpath(SGO_XPATH)
+    # gos = _concatLocs(go + sgo)
+    gos = _concatLocs([CELLULAR_COMPONENT_RE.sub('', x) for x in go if CELLULAR_COMPONENT_RE.search(x)])
 
-    concat = _concatLocs(sl + ssl + go + sgo)
+    concat = _concatLocs(sl + gos)
 
     return locs, gos, concat
 

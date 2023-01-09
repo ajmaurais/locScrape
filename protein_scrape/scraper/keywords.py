@@ -4,7 +4,7 @@ from lxml import html
 
 from .parallelization import scrape
 from .utils import _make_request
-from .constants import BASE_KEYWORD_DAT_PATH, KEYWORD_HEADER_PATH, REQUEST_ERROR, UNIPROT_ERROR, ERROR_HEADER
+from .constants import REQUEST_ERROR, UNIPROT_ERROR, ERROR_HEADER
 
 
 def getFxnList(uniprotIDs: List, nThread: int = None) -> List:

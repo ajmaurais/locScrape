@@ -27,6 +27,9 @@ parent_parser.add_argument('--nThread', default=None, type=int,
                            help='Number of threads to use to lookup Uniprot annotations. '
                                 'Default is the number of logical cores on your system.')
 
+parent_parser.add_argument('--verbose', default=False, action='store_true',
+                           help='If set, verbose output will be printed when --hThread is 1.')
+
 parent_parser.add_argument('-o', '--ofname', type=str, default=None,
                            help='Name of output file. Default is <input_file>_loc.tsv. '
                                 'If multiple input files are given, this argument is ignored.')

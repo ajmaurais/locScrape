@@ -49,7 +49,7 @@ def main():
             continue
 
         #get locations
-        locations = scraper.getLocList(ids, nThread = args.nThread)
+        locations = scraper.getLocList(ids, nThread=args.nThread, verbose=args.verbose)
 
         #transpose locations so columns can easily be added to df
         locations = list(zip(*locations))
