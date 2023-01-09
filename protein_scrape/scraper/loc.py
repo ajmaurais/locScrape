@@ -41,11 +41,12 @@ def getLocs(uniprotID: str, nRetry: int = 10) -> Tuple:
 
     #get go term for celluar component
     go = tree.xpath(GO_XPATH)
+    go = [CELLULAR_COMPONENT_RE.sub('', x) for x in go if CELLULAR_COMPONENT_RE.search(x)]
     # sgo = tree.xpath(SGO_XPATH)
     # gos = _concatLocs(go + sgo)
-    gos = _concatLocs([CELLULAR_COMPONENT_RE.sub('', x) for x in go if CELLULAR_COMPONENT_RE.search(x)])
+    gos = _concatLocs(go)
 
-    concat = _concatLocs(sl + gos)
+    concat = _concatLocs(sl + go)
 
     return locs, gos, concat
 
